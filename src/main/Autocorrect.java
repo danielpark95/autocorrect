@@ -1,0 +1,15 @@
+package main;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+public interface Autocorrect {
+	String getResult(String s);
+	String makeGuess(String s);
+	List<String> removeOneLetter(String s);
+	List<String> addOneLetter(String s);
+	List<String> replaceOneLetter(String s);
+	List<String> switchTwoLetters(String s);
+	List<String> sortWords(Set<String> s, Map<String,Double> m);
+}
