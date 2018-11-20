@@ -16,12 +16,12 @@ import java.util.Set;
  * 	4) switching two adjacent letters
  * 
  * In case of multiple suggestions, the answer with highest count will be returned.
+ * BasicAutocorrect can only return a suggestion that's one character away from input.
  */
 public class BasicAutocorrect implements Autocorrect{
 	private Set<String> wordSet;
 	private Map<String, String> neighborMap;
 	private String letters;
-	public boolean verbose = false;
 	
 	public BasicAutocorrect(Data data) {
 		wordSet = data.getWordSet();
@@ -43,97 +43,99 @@ public class BasicAutocorrect implements Autocorrect{
 	// Return all Strings that can be formed by adding one letter to input
 	// (e.g. "t" -> {"at", "bt", ... , "yt", "zt", "ta", "tb" , ... , "ty", "tz"})
 	public List<String> addOneLetter(String s) {
-		List<String> res = new ArrayList<String>();
+		List<String> addedList = new ArrayList<String>();
 		for (int i = 0 ; i < letters.length(); i++){
 			char letter = letters.charAt(i);
 			for (int j = 0; j <= s.length(); j++) {
 				if (j < s.length()) {
 					String substring = s.substring(0, j) + letter + s.substring(j,s.length());
-					res.add(substring);
+					addedList.add(substring);
 				} else {
 					String substring = s + letter;
-					res.add(substring);
+					addedList.add(substring);
 				}
 			}
 		}
-		return res;
+		return addedList;
 	}
 	
 	// Return all Strings that can be formed by replacing one letter with its keyboard neighbor
+	// (e.g. "mt" -> {"nt","kt","jt","mr","mf","mg","mh","my"})
 	public List<String> replaceOneLetter(String s){
-		List<String> res = new ArrayList<String>();
+		List<String> replacedList = new ArrayList<String>();
 		for (int i = 0 ; i < s.length(); i ++) {
 			String neighbors = neighborMap.get(s.charAt(i)+"");
 			for (int j = 0 ; j < neighbors.length(); j++) {
 				String replaced = s.substring(0,i) + neighbors.charAt(j) + s.subSequence(i+1, s.length());
-				res.add(replaced);
+				replacedList.add(replaced);
 			}
 		}
-		return res;
+		return replacedList;
 	}
 	
 	// Return all valid words that can be formed by switching two adjacent letters
+	// (e.g. "ehllo" -> {"hello", "elhlo", "ehllo", "ehlol"})
 	public List<String> switchTwoLetters(String s){
-		List<String> res = new ArrayList<String>();
+		List<String> switchedList = new ArrayList<String>();
 		for (int i = 0 ; i < s.length()-1; i++) {
 			String switched = s.substring(0,i) + s.charAt(i+1) + s.charAt(i) + s.substring(i+2,s.length());
-			res.add(switched);
+			switchedList.add(switched);
 		}
-		return res;
+		return switchedList;
 	}
-
-	// Combine 4 methods and rank words 
-	public List<String> combineAndSort(String s) {
-		System.out.print ("\n\tBasic ");
-		Set<String> combinedSet = new HashSet<String>();
-		Map<String, Double> combinedMap = new HashMap<String, Double>();
-		
+	
+	// Return a list containing the results of 4 methods
+	public List<String> combineMethods(String s) {
 		List<String> combinedList = new ArrayList<>();
 		combinedList.addAll(removeOneLetter(s));
 		combinedList.addAll(addOneLetter(s));
 		combinedList.addAll(replaceOneLetter(s));
 		combinedList.addAll(switchTwoLetters(s));
-		
+		return combinedList;	
+	}
+	
+	// Return only the words found in wordSet
+	public List<String> filterValidWords(List<String> combinedList) {
 		List<String> validCombinedList = new ArrayList<>();
 		for (String comb : combinedList) {
 			if (wordSet.contains(comb)) {
 				validCombinedList.add(comb);
 			}
 		}
-		
-		for (String word : validCombinedList) {
-			if (combinedSet.contains(word)) {
-				combinedMap.put(word, combinedMap.get(word) + 1.0);
-			} else {
-				combinedSet.add(word);
-				combinedMap.put(word, 1.0);
-			}
-		}
-	
-		List<String> rankedWords = sortWords(combinedSet, combinedMap);
-		return rankedWords;	
+		return validCombinedList;
 	}
 	
-	// Sort words from set based on values in map with custom comparator
-	public List<String> sortWords(Set<String> combinedSet, Map<String, Double> combinedMap) {
-		List<String> resultList = new ArrayList<>();
-		resultList.addAll(combinedSet);
-		if (verbose) {
-			System.out.println("\tcombined set = " + resultList);
-			System.out.println("\tcombined map = " + combinedMap);			
+	// Assign weight to suggestions
+	public Map<String,Double> getSuggestionMap(Set<String> uniqueSuggestions) {
+		Map<String, Double> suggestionMap = new HashMap<>();
+		for (String word : uniqueSuggestions) {
+			if (suggestionMap.containsKey(word)) {
+				suggestionMap.put(word, suggestionMap.get(word) + 1.0);
+			} else {
+				suggestionMap.put(word, 1.0);
+			}
 		}
-		resultList.sort((w1,w2) -> combinedMap.get(w2).compareTo(combinedMap.get(w1)));
-		if (verbose) {
-			System.out.println("\tafter sort = " + resultList);	
-		}
-		return resultList;
+		return suggestionMap;
+	}
+	
+	// Sort unique suggestions based on values in map with custom comparator
+	public List<String> sortSuggestions(Set<String> uniqueSuggestions, Map<String, Double> combinedMap) {
+		List<String> sortedSuggestions = new ArrayList<>();
+		sortedSuggestions.addAll(uniqueSuggestions);
+		sortedSuggestions.sort((w1,w2) -> combinedMap.get(w2).compareTo(combinedMap.get(w1)));
+		return sortedSuggestions;
 	}
 
 	// Suggest the most frequently occurring word in combined
 	public String makeGuess (String s) {
-		List<String> sortedWords = combineAndSort(s);
-		if (sortedWords.size() > 0) {
-			return sortedWords.get(0);
+		List<String> combinedList = combineMethods(s);
+		List<String> suggestions = filterValidWords(combinedList);
+		Set<String> uniqueSuggestions = new HashSet<String>(suggestions);
+		Map<String,Double> suggestionMap = getSuggestionMap(uniqueSuggestions);
+		List<String> sortedSuggestions = sortSuggestions(uniqueSuggestions, suggestionMap);
+		
+		if (sortedSuggestions.size() > 0) {
+			return sortedSuggestions.get(0);
 		} else {
 			return "N/A";
 		}
@@ -147,4 +149,5 @@ public class BasicAutocorrect implements Autocorrect{
 			return "Guess: " + makeGuess(s);
 		}
 	}
+
 }

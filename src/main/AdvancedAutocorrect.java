@@ -16,17 +16,12 @@ import java.util.Set;
  */
 public class AdvancedAutocorrect extends BasicAutocorrect{
 	private Set<String> wordSet;
-	private Map<String, String> neighborMap;
-	private String letters;
 	private Map<String, Integer> rankMap;
 	
 	public AdvancedAutocorrect(Data data) {
 		super(data);
 		wordSet = data.getWordSet();
-		neighborMap = data.getNeighborMap();
-		letters = data.getLetters();
 		rankMap = data.getRankMap();
-		super.verbose = false;
 	}
 	boolean verbose = false;
 	
@@ -99,7 +94,6 @@ public class AdvancedAutocorrect extends BasicAutocorrect{
 	
 	//Overloading parent method to include weights as a parameter
 	public List<String> combineAndSort(String s, Double[] weights) {
-		System.out.print("\tAdvanced ");
 		Set<String> combinedSet = new HashSet<String>();
 		Map<String, Double> combinedMap = new HashMap<String, Double>();
 		
@@ -184,8 +178,8 @@ public class AdvancedAutocorrect extends BasicAutocorrect{
 		}
 		
 		Map<String, Double> finalMap = updateMap(combinedSet, combinedMap);
-		List<String> resultList = sortWords(combinedSet, finalMap);
-		return resultList;
+		List<String> sortedSuggestions = sortSuggestions(combinedSet, finalMap);
+		return sortedSuggestions;
 	}
 
 	// Suggest the most frequently occurring word in combined

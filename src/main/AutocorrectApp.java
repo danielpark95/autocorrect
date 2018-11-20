@@ -17,8 +17,8 @@ public class AutocorrectApp {
 			if (word.equals("quit")) {
 				break;
 			} else {
-				System.out.println(basicAC.getResult(word));
-				System.out.println(advancedAC.getResult(word) + "\n");
+				System.out.println("\tBasic " + basicAC.getResult(word));
+				System.out.println("\tAdvanced " + advancedAC.getResult(word) + "\n");
 			}
 		}
 		System.out.println("Program ended. Bye!");
