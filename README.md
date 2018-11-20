@@ -8,11 +8,12 @@ Once inside the cloned directory, `cd` into `src` folder and type the following 
 javac main/AutocorrectApp.java
 java main/AutocorrectApp
 ```
+
+![alt text](https://github.com/danielpark95/autocorrect/blob/master/img/command_line_demo.png)
+
 ### IDE
 Import the project into Eclipse/IntelliJ/etc. and run AutocorrectApp.java.
 
-### Example
-![alt text](https://github.com/danielpark95/autocorrect/blob/master/img/demo.png)
 
 ## Implementation
 ### BasicAutocorrect
