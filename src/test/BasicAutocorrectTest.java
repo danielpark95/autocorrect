@@ -1,119 +1,120 @@
 package test;
 import main.*;
-import static org.junit.Assert.assertTrue;
+
+import static org.junit.Assert.assertArrayEquals;
 import org.junit.Test;
 import java.util.List;
 
 public class BasicAutocorrectTest {
-	Data data = Data.getInstance();
-	String[] correct = {"on","any","hello", "world", "oracle", "testing", "example"};
-	boolean verbose = true; // Set true to print all test cases
-	
 	@Test
 	public void testAddOneLetter() { 
+		Data data = Data.getInstance();
 		Autocorrect ac = new BasicAutocorrect(data);
-		String[][] misspelled = {
-				{"n","o"},
-				{"ny","ay","an"},
-				{"ello", "hllo", "helo","hell"},
-				{"orld", "wrld", "wold", "word", "worl"},
-				{"racle", "oacle", "orcle", "orale", "orace", "oracl"},
-				{"esting", "tsting", "teting", "tesing", "testng", "testig", "testin"},
-				{"xample", "eample", "exmple", "exaple","examle", "exampe", "exampl"}
+		
+		List<String> res1 = ac.addOneLetter("");
+		String[] actual1 = new String[res1.size()];
+		actual1 = res1.toArray(actual1);
+		String[] expected1 = {
+			"a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q",
+			"r","s","t","u","v","w","x","y","z"
 		};
-		if (verbose) {
-			System.out.println(String.format("%-7s %-22s %s","*****", "testAddOneLetter()", "*****"));
-		}
-		for (int i = 0; i < misspelled.length; i++) {
-			if (verbose)
-				System.out.println((i+1) + ". (" + correct[i] + ")");
-			for (int j = 0; j < misspelled[i].length; j++) {
-				List<String> res = ac.addOneLetter(misspelled[i][j]);
-				if (verbose) {
-					System.out.println(String.format("   %-10s %-3s %s", "\"" + misspelled[i][j] + "\"", "->",  res));}
-				assertTrue(res.contains(correct[i]));
-			}
-		}
+		assertArrayEquals(actual1, expected1);
+		
+		List<String> res2 = ac.addOneLetter("t");
+		String[] actual2 = new String[res2.size()];
+		actual2 = res2.toArray(actual2);
+		String[] expected2 = {
+			"at","ta","bt","tb","ct","tc","dt","td","et","te","ft","tf","gt","tg",
+			"ht","th","it","ti","jt","tj","kt","tk","lt","tl","mt","tm","nt","tn",
+			"ot","to","pt","tp","qt","tq","rt","tr","st","ts","tt","tt","ut","tu",
+			"vt","tv","wt","tw","xt","tx","yt","ty","zt","tz"
+		};
+		assertArrayEquals(actual2, expected2);
+		
+		List<String> res3 = ac.addOneLetter("to");
+		String[] actual3 = new String[res3.size()];
+		actual3 = res3.toArray(actual3);
+		String[] expected3 = {
+			"ato","tao","toa","bto","tbo","tob","cto","tco","toc","dto","tdo","tod",
+			"eto","teo","toe","fto","tfo","tof","gto","tgo","tog","hto","tho","toh",
+			"ito","tio","toi","jto","tjo","toj","kto","tko","tok","lto","tlo","tol",
+			"mto","tmo","tom","nto","tno","ton","oto","too","too","pto","tpo","top",
+			"qto","tqo","toq","rto","tro","tor","sto","tso","tos","tto","tto","tot",
+			"uto","tuo","tou","vto","tvo","tov","wto","two","tow","xto","txo","tox",
+			"yto","tyo","toy","zto","tzo","toz"
+		};
+		assertArrayEquals(actual3, expected3);
 	}
 
 	@Test
 	public void testRemoveOneLetter() {
+		Data data = Data.getInstance();
 		Autocorrect ac = new BasicAutocorrect(data);
-		String[][] misspelled = {
-				{"yon","ozn", "onq"},
-				{"aany","anmy","anyy"},
-				{"fhello","hfello","heello","helzlo","hellqo","hellox"},
-				{"qworld","wsorld","woorld","worrld","worldd"},
-				{"poracle","otracle","oraacle","oraclle","oracloe","oraclee"},
-				{"ftesting","tzesting","tes2ting","test5ing","test9ing","testinng","testingg"},
-				{"rexample","eexample","exxample","examnple","exampple","examplee","exampleq"}
-		};
-		if (verbose) {
-			System.out.println(String.format("\n%-7s %-22s %s","*****", "testRemoveOneLetter()", "*****"));
-		}
-		for (int i = 0; i < misspelled.length; i++) {
-			if (verbose) {
-				System.out.println((i+1) + ". (" + correct[i] + ")");}
-			for (int j = 0; j < misspelled[i].length; j++) {
-				List<String> res = ac.removeOneLetter(misspelled[i][j]);
-				if (verbose) {
-					System.out.println(String.format("   %-10s %-3s %s", "\"" + misspelled[i][j] + "\"", "->",  res));}
-				assertTrue(res.contains(correct[i]));
-			}
-		}
+		List<String> res1 = ac.removeOneLetter("p");
+		String[] actual1 = new String[res1.size()];
+		actual1 = res1.toArray(actual1);
+		String[] expected1 = {""};
+		assertArrayEquals(actual1, expected1);
+		
+		List<String> res2 = ac.removeOneLetter("aq");
+		String[] actual2 = new String[res2.size()];
+		actual2 = res2.toArray(actual2);
+		String[] expected2 = {"q","a"};
+		assertArrayEquals(actual2, expected2);
+		
+		List<String> res3 = ac.removeOneLetter("hello");
+		String[] actual3 = new String[res3.size()];
+		actual3 = res3.toArray(actual3);
+		String[] expected3 = {"ello","hllo","helo","helo","hell"};
+		assertArrayEquals(actual3, expected3);
 	}
 
 	@Test
 	public void testReplaceOneLetter() {
+		Data data = Data.getInstance();
 		Autocorrect ac = new BasicAutocorrect(data);
-		String[][] misspelled = {
-				{"pn","om"},
-				{"zny","amy","anu"},
-				{"nello","hrllo","heklo","helpo","hellp"},
-				{"eorld","wprld","wotld","workd","worlc"},
-				{"pracle","otacle","orzcle","oradle","oracoe","oraclf"},
-				{"yesting","trsting","tezting","tesring","testong","testimg","testinf"},
-				{"3xample","ezample","exxmple","exa ple","exam[le","exampke","examplr"}
-		};
-		if (verbose) {
-			System.out.println(String.format("\n%-7s %-22s %s","*****", "testReplaceOneLetter()", "*****"));
-		}
-		for (int i = 0; i < misspelled.length; i++) {
-			if (verbose) {
-				System.out.println((i+1) + ". (" + correct[i] + ")");}
-			for (int j = 0; j < misspelled[i].length; j++) {
-				List<String> res = ac.replaceOneLetter(misspelled[i][j]);
-				if (verbose) {
-					System.out.println(String.format("   %-10s %-3s %s", "\"" + misspelled[i][j] + "\"", "->",  res));}
-				assertTrue(res.contains(correct[i]));
-			}
-		}
+		
+		List<String> res1 = ac.replaceOneLetter("a");
+		String[] actual1 = new String[res1.size()];
+		actual1 = res1.toArray(actual1);
+		String[] expected1 = {"z","x","s","w","q"};
+		assertArrayEquals(actual1, expected1);
+		
+		List<String> res2 = ac.replaceOneLetter("mt");
+		String[] actual2 = new String[res2.size()];
+		actual2 = res2.toArray(actual2);
+		String[] expected2 = {"nt","kt","jt","mr","mf","mg","mh","my"};
+		assertArrayEquals(actual2, expected2);
 	}
 
 	@Test
 	public void testSwitchTwoLetters() {
+		Data data = Data.getInstance();
 		Autocorrect ac = new BasicAutocorrect(data);
-		String[][] misspelled = {
-				{"no"},
-				{"nay","ayn"},
-				{"ehllo","hlelo","hello","helol"},
-				{"owrld","wrold","wolrd","wordl"},
-				{"roacle","oarcle","orcale","oralce","oracel"},
-				{"etsting","tseting","tetsing","tesitng","testnig","testign"},
-				{"xeample","eaxmple","exmaple","exapmle","examlpe","exampel"}
-		};
-		if (verbose) {
-			System.out.println(String.format("\n%-7s %-22s %s","*****", "testSwitchTwoLetters()", "*****"));
-		}
-		for (int i = 0; i < misspelled.length; i++) {
-			if (verbose) {
-				System.out.println((i+1) + ". (" + correct[i] + ")");}
-			for (int j = 0; j < misspelled[i].length; j++) {
-				List<String> res = ac.switchTwoLetters(misspelled[i][j]);
-				if (verbose) {
-					System.out.println(String.format("   %-10s %-3s %s", "\"" + misspelled[i][j] + "\"", "->",  res));}
-				assertTrue(res.contains(correct[i]));
-			}
-		}
+		
+		List<String> res1 = ac.switchTwoLetters("a");
+		String[] actual1 = new String[res1.size()];
+		actual1 = res1.toArray(actual1);
+		String[] expected1 = {};
+		assertArrayEquals(actual1, expected1);
+		
+		List<String> res2 = ac.switchTwoLetters("mt");
+		String[] actual2 = new String[res2.size()];
+		actual2 = res2.toArray(actual2);
+		String[] expected2 = {"tm"};
+		assertArrayEquals(actual2, expected2);
+		
+		
+		List<String> res3 = ac.switchTwoLetters("tpo");
+		String[] actual3 = new String[res3.size()];
+		actual3 = res3.toArray(actual3);
+		String[] expected3 = {"pto","top"};
+		assertArrayEquals(actual3, expected3);
+		
+		List<String> res4 = ac.switchTwoLetters("ehllo");
+		String[] actual4 = new String[res4.size()];
+		actual4 = res4.toArray(actual4);
+		String[] expected4 = {"hello","elhlo","ehllo","ehlol"};
+		assertArrayEquals(actual4, expected4);	
 	}
 }

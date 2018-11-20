@@ -7,15 +7,21 @@ import java.util.Map;
 import java.util.Set;
 
 /*
- * Basic implementation of Autocorrect that returns the most frequently suggested word 
- * after running 4 methods (add one letter, remove one letter, replace one letter, switch
- * two adjacent letters).
+ * Basic implementation of Autocorrect that returns a suggestion for a misspelled word.
+ * 
+ * Given a String s, makeGuess(s) checks if a valid word can be formed by
+ * 	1) adding one letter
+ * 	2) removing one letter
+ * 	3) replacing one letter
+ * 	4) switching two adjacent letters
+ * 
+ * In case of multiple suggestions, the answer with highest count will be returned.
  */
 public class BasicAutocorrect implements Autocorrect{
 	private Set<String> wordSet;
 	private Map<String, String> neighborMap;
 	private String letters;
-	boolean verbose = false;
+	public boolean verbose = false;
 	
 	public BasicAutocorrect(Data data) {
 		wordSet = data.getWordSet();
@@ -23,60 +29,45 @@ public class BasicAutocorrect implements Autocorrect{
 		letters = data.getLetters();
 	}
 	
-	// Return all valid words that can be formed by dropping one letter from misspelled input
+	// Return all Strings that can be formed by removing one letter from input
+	// (e.g. "datax" -> {"atax", "dtax", "daax", "datx","data"})
 	public List<String> removeOneLetter(String s) {
-		List<String> res = new ArrayList<String>();
+		List<String> removedList = new ArrayList<String>();
 		for (int i = 0 ; i < s.length(); i++) {
-			String dropped = s.substring(0, i) + s.substring(i+1, s.length());
-			if (wordSet.contains(dropped)) {
-				res.add(dropped);
-			}
+			String removed = s.substring(0, i) + s.substring(i+1, s.length());
+			removedList.add(removed);
 		}
-		if (verbose) { 
-			System.out.println("\tremoveOneLetter = " + res );	
-		}
-		return res;
+		return removedList;
 	}
 	
-	// Return all valid words that can be formed by adding one letter to input
+	// Return all Strings that can be formed by adding one letter to input
+	// (e.g. "t" -> {"at", "bt", ... , "yt", "zt", "ta", "tb" , ... , "ty", "tz"})
 	public List<String> addOneLetter(String s) {
 		List<String> res = new ArrayList<String>();
-		
 		for (int i = 0 ; i < letters.length(); i++){
 			char letter = letters.charAt(i);
 			for (int j = 0; j <= s.length(); j++) {
 				if (j < s.length()) {
 					String substring = s.substring(0, j) + letter + s.substring(j,s.length());
-					if (wordSet.contains(substring)) {
-						res.add(substring);
-					}
+					res.add(substring);
 				} else {
 					String substring = s + letter;
-					if (wordSet.contains(substring)) {
-						res.add(substring);
-					}
+					res.add(substring);
 				}
 			}
-		}
-		if (verbose) { 
-			System.out.println("\taddOneLetter = " + res );	
 		}
 		return res;
 	}
 	
-	// Return all valid words that can be formed by replacing one letter with its keyboard neighbor
+	// Return all Strings that can be formed by replacing one letter with its keyboard neighbor
 	public List<String> replaceOneLetter(String s){
 		List<String> res = new ArrayList<String>();
 		for (int i = 0 ; i < s.length(); i ++) {
 			String neighbors = neighborMap.get(s.charAt(i)+"");
 			for (int j = 0 ; j < neighbors.length(); j++) {
 				String replaced = s.substring(0,i) + neighbors.charAt(j) + s.subSequence(i+1, s.length());
-				if (wordSet.contains(replaced)) {
-					res.add(replaced);}
+				res.add(replaced);
 			}
-		}
-		if (verbose) { 
-			System.out.println("\treplaceOneLetter = " + res );	
 		}
 		return res;
 	}
@@ -86,11 +77,7 @@ public class BasicAutocorrect implements Autocorrect{
 		List<String> res = new ArrayList<String>();
 		for (int i = 0 ; i < s.length()-1; i++) {
 			String switched = s.substring(0,i) + s.charAt(i+1) + s.charAt(i) + s.substring(i+2,s.length());
-			if (wordSet.contains(switched)) {
-				res.add(switched);}
-		}
-		if (verbose) { 
-			System.out.println("\tswitchTwoLetters = " + res );	
+			res.add(switched);
 		}
 		return res;
 	}
@@ -98,7 +85,6 @@ public class BasicAutocorrect implements Autocorrect{
 	// Combine 4 methods and rank words 
 	public List<String> combineAndSort(String s) {
 		System.out.print ("\n\tBasic ");
-		//System.out.println("\tinput = \""  + s + "\"");
 		Set<String> combinedSet = new HashSet<String>();
 		Map<String, Double> combinedMap = new HashMap<String, Double>();
 		
@@ -108,7 +94,14 @@ public class BasicAutocorrect implements Autocorrect{
 		combinedList.addAll(replaceOneLetter(s));
 		combinedList.addAll(switchTwoLetters(s));
 		
-		for (String word : combinedList) {
+		List<String> validCombinedList = new ArrayList<>();
+		for (String comb : combinedList) {
+			if (wordSet.contains(comb)) {
+				validCombinedList.add(comb);
+			}
+		}
+		
+		for (String word : validCombinedList) {
 			if (combinedSet.contains(word)) {
 				combinedMap.put(word, combinedMap.get(word) + 1.0);
 			} else {
