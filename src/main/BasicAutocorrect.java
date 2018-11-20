@@ -98,7 +98,7 @@ public class BasicAutocorrect implements Autocorrect{
 	// Combine 4 methods and rank words 
 	public List<String> combineAndSort(String s) {
 		System.out.println("Basic Autocorrect");
-		System.out.println("\tinput = \""  + s + "\"");
+		//System.out.println("\tinput = \""  + s + "\"");
 		Set<String> combinedSet = new HashSet<String>();
 		Map<String, Double> combinedMap = new HashMap<String, Double>();
 		
@@ -125,11 +125,14 @@ public class BasicAutocorrect implements Autocorrect{
 	public List<String> sortWords(Set<String> combinedSet, Map<String, Double> combinedMap) {
 		List<String> resultList = new ArrayList<>();
 		resultList.addAll(combinedSet);
-		System.out.println("\tcombined set = " + resultList);
-		System.out.println("\tcombined map = " + combinedMap);
-	
+		if (verbose) {
+			System.out.println("\tcombined set = " + resultList);
+			System.out.println("\tcombined map = " + combinedMap);			
+		}
 		resultList.sort((w1,w2) -> combinedMap.get(w2).compareTo(combinedMap.get(w1)));
-		System.out.println("\tafter sort = " + resultList);
+		if (verbose) {
+			System.out.println("\tafter sort = " + resultList);	
+		}
 		return resultList;
 	}
 
@@ -146,9 +149,9 @@ public class BasicAutocorrect implements Autocorrect{
 	// Access point for application to return result
 	public String getResult(String s) {
 		if (wordSet.contains(s)) {
-			return "Found: " + s + "\n";
+			return "    Found: " + s + "\n";
 		} else {
-			return "Guess: " + makeGuess(s) + "\n";
+			return "    Guess: " + makeGuess(s) + "\n";
 		}
 	}
 }

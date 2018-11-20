@@ -23,7 +23,6 @@ public class AdvancedAutocorrect extends BasicAutocorrect{
 	}
 	boolean verbose = true;
 	
-	
 	public double[] getMinMax(Set<String> combinedSet, Map<String, Double> combinedMap) {
 		double min = Double.MAX_VALUE;
 		double max = Double.MIN_VALUE;
@@ -59,7 +58,9 @@ public class AdvancedAutocorrect extends BasicAutocorrect{
 				rankMap2.put(word, 0.0 + rankMap.get(word));
 			}
 		}
-		System.out.println("\trankMap = " + rankMap2);
+		if (verbose) {
+			System.out.println("\trankMap = " + rankMap2);	
+		}
 		
 		for (String word : combinedSet) {
 			if (!rankMap.containsKey(word)) {
@@ -71,7 +72,9 @@ public class AdvancedAutocorrect extends BasicAutocorrect{
 				logMap.put(word, z);
 			}
 		}
-		System.out.println("\tlogMap = " + logMap);
+		if (verbose) {
+			System.out.println("\tlogMap = " + logMap);
+		}
 		return logMap;
 	}
 	public Map<String, Double> updateMap (Set<String> combinedSet, Map<String,Double> combinedMap){
@@ -85,7 +88,7 @@ public class AdvancedAutocorrect extends BasicAutocorrect{
 	//Overloading parent method to include weights as a parameter
 	public List<String> combineAndSort(String s, Double[] weights) {
 		System.out.println("Advanced Autocorrect");
-		System.out.println("\tinput = \""  + s + "\"");
+		//System.out.println("\tinput = \""  + s + "\"");
 		Set<String> combinedSet = new HashSet<String>();
 		Map<String, Double> combinedMap = new HashMap<String, Double>();
 		

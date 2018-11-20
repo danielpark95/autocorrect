@@ -3,7 +3,7 @@ Java implementation of Autocorrect.
 
 ## Usage
 ### Command Line
-Once inside the cloned directory, type the following commands to run the client application.
+Once inside the cloned directory, `cd` into `/src/` type the following commands to run the client application.
 ```
 javac main/AutocorrectApp.java
 java main/AutocorrectApp
