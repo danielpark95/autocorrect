@@ -9,7 +9,8 @@ javac main/AutocorrectApp.java
 java main/AutocorrectApp
 ```
 
-<a href="url"><img src="https://github.com/danielpark95/autocorrect/blob/master/img/command_line_demo.png" align="left" height="48" width="48" ></a>
+<a href="url"><img src="https://github.com/danielpark95/autocorrect/blob/master/img/command_line_demo.png" align="left" width="200" ></a>
+
 
 ### IDE
 Import the project into Eclipse/IntelliJ/etc. and run AutocorrectApp.java.
