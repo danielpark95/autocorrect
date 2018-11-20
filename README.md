@@ -32,7 +32,7 @@ In case of multiple suggestions, the answer with highest count will be returned.
 BasicAutocorrect can only return a suggestion that's one character away from input.
 
 ### AdvancedAutocorrect
-Advanced implementation of Autocorrect that
+Advanced implementation of Autocorrect (extends BasicAutocorrect) that
 1) favors suggestions that are common words over uncommon words
 2) favors suggestions with length similar to input
 3) finds suggestions up to 3 letters different from input
