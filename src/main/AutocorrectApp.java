@@ -1,6 +1,9 @@
 package main;
 import java.util.Scanner;
 
+/*
+ * Application to run Basic and Advanced Autocorrect.
+ */
 public class AutocorrectApp {
 	public static void main(String[] args) {
 		Data data = Data.getInstance();

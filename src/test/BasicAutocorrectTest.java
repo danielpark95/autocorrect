@@ -1,15 +1,16 @@
 package test;
-import main.*;
 
-import static org.junit.Assert.assertArrayEquals;
+import main.Data;
+import main.BasicAutocorrect;
 import org.junit.Test;
+import static org.junit.Assert.assertArrayEquals;
 import java.util.List;
 
 public class BasicAutocorrectTest {
 	@Test
 	public void testAddOneLetter() { 
 		Data data = Data.getInstance();
-		Autocorrect ac = new BasicAutocorrect(data);
+		BasicAutocorrect ac = new BasicAutocorrect(data);
 		
 		List<String> res1 = ac.addOneLetter("");
 		String[] actual1 = new String[res1.size()];
@@ -49,7 +50,7 @@ public class BasicAutocorrectTest {
 	@Test
 	public void testRemoveOneLetter() {
 		Data data = Data.getInstance();
-		Autocorrect ac = new BasicAutocorrect(data);
+		BasicAutocorrect ac = new BasicAutocorrect(data);
 		List<String> res1 = ac.removeOneLetter("p");
 		String[] actual1 = new String[res1.size()];
 		actual1 = res1.toArray(actual1);
@@ -72,7 +73,7 @@ public class BasicAutocorrectTest {
 	@Test
 	public void testReplaceOneLetter() {
 		Data data = Data.getInstance();
-		Autocorrect ac = new BasicAutocorrect(data);
+		BasicAutocorrect ac = new BasicAutocorrect(data);
 		
 		List<String> res1 = ac.replaceOneLetter("a");
 		String[] actual1 = new String[res1.size()];
@@ -90,7 +91,7 @@ public class BasicAutocorrectTest {
 	@Test
 	public void testSwitchTwoLetters() {
 		Data data = Data.getInstance();
-		Autocorrect ac = new BasicAutocorrect(data);
+		BasicAutocorrect ac = new BasicAutocorrect(data);
 		
 		List<String> res1 = ac.switchTwoLetters("a");
 		String[] actual1 = new String[res1.size()];

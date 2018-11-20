@@ -13,13 +13,11 @@ public interface Autocorrect {
 	List<String> replaceOneLetter(String s);
 	List<String> switchTwoLetters(String s);
 	
-	List<List<String>> combineMethods(List<List<String>> s);
-	List<List<String>> filterValidWords(List<List<String>> combinedList);
-	
+	List<List<String>> combineMethods(List<List<String>> l);
+	List<List<String>> filterValidWords(List<List<String>> l);
+	Set<String> getUniqueSuggestions(List<List<String>> l);
 	List<String> sortSuggestions(Set<String> s, Map<String, Double> m);
 
 	String suggestOne(String s);
 	String getResult(String s);
-	
-	
 }
