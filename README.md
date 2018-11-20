@@ -12,7 +12,7 @@ java main/AutocorrectApp
 Import the project into Eclipse/IntelliJ/etc. and run AutocorrectApp.java.
 
 ### Example
-![alt text](https://github.com/danielpark95/autocorrect/blob/master/img/example.png)
+![alt text](https://github.com/danielpark95/autocorrect/blob/master/img/demo.png)
 
 ## Implementation
 ### BasicAutocorrect
