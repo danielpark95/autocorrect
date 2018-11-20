@@ -97,7 +97,7 @@ public class BasicAutocorrect implements Autocorrect{
 
 	// Combine 4 methods and rank words 
 	public List<String> combineAndSort(String s) {
-		System.out.println("Basic Autocorrect");
+		System.out.print ("\nBasic ");
 		//System.out.println("\tinput = \""  + s + "\"");
 		Set<String> combinedSet = new HashSet<String>();
 		Map<String, Double> combinedMap = new HashMap<String, Double>();
@@ -149,9 +149,9 @@ public class BasicAutocorrect implements Autocorrect{
 	// Access point for application to return result
 	public String getResult(String s) {
 		if (wordSet.contains(s)) {
-			return "    Found: " + s + "\n";
+			return "Found: " + s;
 		} else {
-			return "    Guess: " + makeGuess(s) + "\n";
+			return "Guess: " + makeGuess(s);
 		}
 	}
 }
