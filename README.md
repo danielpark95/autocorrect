@@ -19,11 +19,20 @@ Import the project into Eclipse/IntelliJ/etc. and run AutocorrectApp.java.
 
 ## Implementation
 ### BasicAutocorrect
-Basic implementation of Autocorrect that returns the most frequently suggested word after running 4 methods (add one letter, remove one letter, replace one letter, switch two adjacent letters).
+Basic implementation of Autocorrect that returns a suggestion for a misspelled word.
 
+Given a String s, makeGuess(s) checks if a valid word can be formed by
+1) adding one letter
+2) removing one letter
+3) replacing one letter
+4) switching two adjacent letters
+ 
+In case of multiple suggestions, the answer with highest count will be returned.
+
+BasicAutocorrect can only return a suggestion that's one character away from input.
 
 ### AdvancedAutocorrect
-Advanced implementation of AutoCorrect that
-1) extends BasicAutocorrect
-2) takes into account word frequency in final ranking
-3) weighs equal-length words returned from replaceOneLetter() and switchTwoLetters() more than addOneLetter() and removeOneLetter() (e.g. "esting" could be "eating" or "testing", but "eating" will be prioritized) 
+Advanced implementation of Autocorrect that
+1) favors suggestions that are common words over uncommon words
+2) favors suggestions with length similar to input
+3) finds suggestions up to 3 letters different from input
