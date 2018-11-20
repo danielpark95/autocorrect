@@ -1,29 +1,26 @@
 package main;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 /*
- * Advanced implementation of AutoCorrect that
- * 	1) extends BasicAutocorrect
- * 	2) takes into account word frequency in final ranking
- * 	3) weighs equal-length words returned from replaceOneLetter() and switchTwoLetters() more
- * 	   than addOneLetter() and removeOneLetter()
- *     (e.g. "esting" could be "eating" or "testing", but "eating" will be prioritized) 
+ * Advanced implementation of Autocorrect that
+ * 	1) favors suggestions that are common words over uncommon words
+ * 	2) favors suggestions with length similar to input
+ * 	3) finds suggestions up to 3 letters different from input
  */
 public class AdvancedAutocorrect extends BasicAutocorrect{
-	private Set<String> wordSet;
+	// Top 100k english words, ordered by frequency
+	// "the" -> 1, "of" -> 2, "and" -> 3, etc.
 	private Map<String, Integer> rankMap;
 	
 	public AdvancedAutocorrect(Data data) {
 		super(data);
-		wordSet = data.getWordSet();
 		rankMap = data.getRankMap();
 	}
-	boolean verbose = false;
 	
 	// Get min,max rank of all the words in combined set. Helper function for normalizeRankMap
 	public double[] getMinMax(Set<String> combinedSet) {
@@ -45,30 +42,20 @@ public class AdvancedAutocorrect extends BasicAutocorrect{
 		return minMax;
 	}
 	
-	// rankMap contains the ranks of words in 
-	public Map<String,Double> normalizeRankMap(Set<String> combinedSet, Map<String, Double> combinedMap) {
+	// Create a weight system that gives the most uncommon word in a set 0.8 multiplier,
+	// and the most common word a 1.3 multiplier. If a word is not found in the top 100k
+	// dataset, it will get a 0.7 multiplier.
+	public Map<String,Double> normalizeRankMap(Set<String> combinedSet){
 		double[] minMax = getMinMax(combinedSet);
 		double min = minMax[0];
 		double max = minMax[1];
-		double floor = 1.0;
-		double ceiling = 1.3;
 		Map<String,Double> logMap = new HashMap<>();
-		
-		Map<String, Double> rankMap2 = new HashMap<>();
+
+		double floor = 0.8;		// Weight multiplier for least frequent word in set
+		double ceiling = 1.3;	// Weight multiplier for most frequent word in set
 		for (String word : combinedSet) {
 			if (!rankMap.containsKey(word)) {
-				rankMap2.put(word, -1.0);
-			} else {
-				rankMap2.put(word, 0.0 + rankMap.get(word));
-			}
-		}
-		if (verbose) {
-			System.out.println("\trankMap = " + rankMap2);	
-		}
-		
-		for (String word : combinedSet) {
-			if (!rankMap.containsKey(word)) {
-				logMap.put(word, 0.9);
+				logMap.put(word, 0.7);
 			} else {
 				double rank = rankMap.get(word);
 				// min,max normalization of word rank (logged for smaller spread)
@@ -77,118 +64,58 @@ public class AdvancedAutocorrect extends BasicAutocorrect{
 				logMap.put(word, z);
 			}
 		}
-		if (verbose) {
-			System.out.println("\tlogMap = " + logMap);
-		}
 		return logMap;
 	}
 	
-	
-	public Map<String, Double> updateMap (Set<String> combinedSet, Map<String,Double> combinedMap){
-		Map<String, Double> logMap = normalizeRankMap(combinedSet, combinedMap);
+	// Combine the word frequency weight system with word-length weight system
+	public Map<String, Double> combineMaps (Set<String> combinedSet, Map<String,Double> normalizedRankMap, Map<String,Double> combinedMap){
 		for (String word : combinedSet) {
-			combinedMap.put(word, combinedMap.get(word) * logMap.get(word));
+			combinedMap.put(word, combinedMap.get(word) * normalizedRankMap.get(word));
 		}
 		return combinedMap;
 	}
 	
-	//Overloading parent method to include weights as a parameter
-	public List<String> combineAndSort(String s, Double[] weights) {
-		Set<String> combinedSet = new HashSet<String>();
-		Map<String, Double> combinedMap = new HashMap<String, Double>();
-		
-		List<List<String>> validCombinedList = new ArrayList<>();
-		
-		List<List<String>> combinedList = new ArrayList<>();
-		combinedList.add(removeOneLetter(s));
-		combinedList.add(addOneLetter(s));
-		combinedList.add(replaceOneLetter(s));
-		combinedList.add(switchTwoLetters(s));
-
-		int runCount = 0;
-		boolean foundWord = false;
-		for (List<String> combList : combinedList) {
-			List<String> validCombList = new ArrayList<>();
-			for (String comb : combList) {
-				if (wordSet.contains(comb)) {
-					validCombList.add(comb);
-					foundWord = true;
-				}
-			}
-			validCombinedList.add(validCombList);
-		}
-		
-		while (runCount < 3 && !foundWord) {		
-			List<List<String>> combinedAgainList = new ArrayList<>();
-			
-			List<String> addedAgainList = new ArrayList<>();
-			for (List<String> comb : combinedList) {
-				for (String word : comb) {
-					addedAgainList.addAll(addOneLetter(word));
-				}
-			}
-			combinedAgainList.add(addedAgainList);
-			
-			List<String> removedAgainList = new ArrayList<>();
-			for (List<String> comb : combinedList) {
-				for (String word : comb) {
-					removedAgainList.addAll(removeOneLetter(word));
-				}
-			}
-			combinedAgainList.add(removedAgainList);
-			
-			List<String> replacedAgainList = new ArrayList<>();
-			for (List<String> comb : combinedList) {
-				for (String word : comb) {
-					replacedAgainList.addAll(replaceOneLetter(word));
-				}
-			}
-			combinedAgainList.add(replacedAgainList);
-			
-			List<String> switchedAgainList = new ArrayList<>();
-			for (List<String> comb : combinedList) {
-				for (String word : comb) {
-					switchedAgainList.addAll(switchTwoLetters(word));
-				}
-			}
-			combinedAgainList.add(switchedAgainList);
-			
-			for (List<String> combList : combinedAgainList) {
-				List<String> validCombList = new ArrayList<>();
-				for (String comb : combList) {
-					if (wordSet.contains(comb)) {
-						validCombList.add(comb);
-						foundWord = true;
-					}
-				}
-				validCombinedList.add(validCombList);
-			}	
-			runCount++;
-		}
-		
+	// Suggested words from replaceOneLetter and switchTwoLetters are assigned a multiplier of 1.5,
+	// while remove and add are assigned 1. This is to favor suggestions that are more similar to 
+	// input.
+	public Map<String,Double> getSuggestionMap(List<List<String>> suggestionsList, Double[] weights, int runCount) {
+		Map<String, Double> suggestionMap = new HashMap<>();
 		for (int i = 0; i < 4; i++) {
-			for (String word : validCombinedList.get(4*runCount + i)) {
-				if (combinedSet.contains(word)) {
-					combinedMap.put(word, combinedMap.get(word) + weights[4*runCount + i]);
+			for (String word : suggestionsList.get(i)) {
+				if (suggestionMap.containsKey(word)) {
+					suggestionMap.put(word, suggestionMap.get(word) + weights[i] / (runCount + 1));
 				} else {
-					combinedSet.add(word);
-					combinedMap.put(word, weights[4*runCount + i]);
+					suggestionMap.put(word, weights[i] / (runCount + 1));
 				}
 			}
 		}
-		
-		Map<String, Double> finalMap = updateMap(combinedSet, combinedMap);
-		List<String> sortedSuggestions = sortSuggestions(combinedSet, finalMap);
-		return sortedSuggestions;
+		return suggestionMap;
 	}
-
+	
 	// Suggest the most frequently occurring word in combined
 	@Override
-	public String makeGuess(String s) {
-		Double[] weights = {1.0,1.0,1.5,1.5,0.5,0.5,0.5,0.75,0.75};
-		List<String> sortedWords = combineAndSort(s, weights);
-		if (sortedWords.size() > 0) {
-			return sortedWords.get(0);
+	public String suggestOne(String s) {
+		Double[] weights = {1.0,1.0,1.5,1.5};
+		int runCount = 0;
+		List<List<String>> l1 = new ArrayList<>();
+		l1.add(Arrays.asList(s));
+		List<List<String>> combinedList = combineMethods(l1);
+		List<List<String>> suggestionsList = filterValidWords(combinedList);
+		Set<String> uniqueSuggestions = getUniqueSuggestions(suggestionsList);
+		
+		while (++runCount < 2 && uniqueSuggestions.isEmpty()) {
+			combinedList = combineMethods(combinedList);
+			suggestionsList = filterValidWords(combinedList);
+			uniqueSuggestions = getUniqueSuggestions(suggestionsList);
+		}
+		
+		Map<String, Double> suggestionMap = getSuggestionMap(suggestionsList,weights,runCount);
+		Map<String, Double> normalizedRankMap = normalizeRankMap(uniqueSuggestions);
+		Map<String, Double> finalMap = combineMaps(uniqueSuggestions, suggestionMap, normalizedRankMap);
+		List<String> sortedSuggestions = sortSuggestions(uniqueSuggestions, finalMap);
+		
+		if (sortedSuggestions.size() > 0) {
+			return sortedSuggestions.get(0);
 		} else {
 			return "N/A";
 		}

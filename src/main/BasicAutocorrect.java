@@ -1,5 +1,6 @@
 package main;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -84,38 +85,94 @@ public class BasicAutocorrect implements Autocorrect{
 		return switchedList;
 	}
 	
-	// Return a list containing the results of 4 methods
-	public List<String> combineMethods(String s) {
-		List<String> combinedList = new ArrayList<>();
-		combinedList.addAll(removeOneLetter(s));
-		combinedList.addAll(addOneLetter(s));
-		combinedList.addAll(replaceOneLetter(s));
-		combinedList.addAll(switchTwoLetters(s));
-		return combinedList;	
+//	// Return a list containing the results of 4 methods
+//	public List<List<String>> combineMethods(String s) {
+//		List<List<String>> combinedList = new ArrayList<>();
+//		combinedList.add(removeOneLetter(s));
+//		combinedList.add(addOneLetter(s));
+//		combinedList.add(replaceOneLetter(s));
+//		combinedList.add(switchTwoLetters(s));
+//		return combinedList;	
+//	}
+//	
+//	
+	// Combine methods again on invalid words if there are no valid words
+	public List<List<String>> combineMethods (List<List<String>> combinedList) {
+		List<List<String>> combinedAgainList = new ArrayList<>();
+		
+		List<String> addedAgainList = new ArrayList<>();
+		for (List<String> comb : combinedList) {
+			for (String word : comb) {
+				addedAgainList.addAll(addOneLetter(word));
+			}
+		}
+		combinedAgainList.add(addedAgainList);
+
+		List<String> removedAgainList = new ArrayList<>();
+		for (List<String> comb : combinedList) {
+			for (String word : comb) {
+				removedAgainList.addAll(removeOneLetter(word));
+			}
+		}
+		combinedAgainList.add(removedAgainList);
+		
+		List<String> replacedAgainList = new ArrayList<>();
+		for (List<String> comb : combinedList) {
+			for (String word : comb) {
+				replacedAgainList.addAll(replaceOneLetter(word));
+			}
+		}
+		combinedAgainList.add(replacedAgainList);
+		
+		List<String> switchedAgainList = new ArrayList<>();
+		for (List<String> comb : combinedList) {
+			for (String word : comb) {
+				switchedAgainList.addAll(switchTwoLetters(word));
+			}
+		}
+		combinedAgainList.add(switchedAgainList);
+		
+		return combinedAgainList;
+		
 	}
 	
 	// Return only the words found in wordSet
-	public List<String> filterValidWords(List<String> combinedList) {
-		List<String> validCombinedList = new ArrayList<>();
-		for (String comb : combinedList) {
-			if (wordSet.contains(comb)) {
-				validCombinedList.add(comb);
+	public List<List<String>> filterValidWords(List<List<String>> combinedList) {
+		List<List<String>> validCombinedList = new ArrayList<>();
+		for (List<String> combList : combinedList) {
+			List<String> validList = new ArrayList<>();
+			for (String comb : combList) {
+				if (wordSet.contains(comb)) {
+					validList.add(comb);
+				}
 			}
+			validCombinedList.add(validList);
 		}
 		return validCombinedList;
 	}
 	
-	// Assign weight to suggestions
-	public Map<String,Double> getSuggestionMap(Set<String> uniqueSuggestions) {
+	// Assign weight of 1 to all suggestions
+	public Map<String,Double> getSuggestionMap(List<List<String>> suggestionsList) {
 		Map<String, Double> suggestionMap = new HashMap<>();
-		for (String word : uniqueSuggestions) {
-			if (suggestionMap.containsKey(word)) {
-				suggestionMap.put(word, suggestionMap.get(word) + 1.0);
-			} else {
-				suggestionMap.put(word, 1.0);
+		for (List<String> suggestions : suggestionsList) {
+			for (String word : suggestions) {
+				if (suggestionMap.containsKey(word)) {
+					suggestionMap.put(word, suggestionMap.get(word) + 1.0);
+				} else {
+					suggestionMap.put(word, 1.0);
+				}
 			}
 		}
 		return suggestionMap;
+	}
+	
+	// Remove duplicates and return set
+	public Set<String> getUniqueSuggestions(List<List<String>> suggestionsList) {
+		Set<String> uniqueSuggestions = new HashSet<String>();
+		for (List<String> suggestions : suggestionsList) {
+			uniqueSuggestions.addAll(suggestions);
+		}
+		return uniqueSuggestions;
 	}
 	
 	// Sort unique suggestions based on values in map with custom comparator
@@ -126,12 +183,15 @@ public class BasicAutocorrect implements Autocorrect{
 		return sortedSuggestions;
 	}
 
-	// Suggest the most frequently occurring word in combined
-	public String makeGuess (String s) {
-		List<String> combinedList = combineMethods(s);
-		List<String> suggestions = filterValidWords(combinedList);
-		Set<String> uniqueSuggestions = new HashSet<String>(suggestions);
-		Map<String,Double> suggestionMap = getSuggestionMap(uniqueSuggestions);
+	// Give a suggestion
+	public String suggestOne (String s) {
+		List<List<String>> l1 = new ArrayList<>();
+		l1.add(Arrays.asList(s));
+		
+		List<List<String>> combinedList = combineMethods(l1);
+		List<List<String>> suggestionsList = filterValidWords(combinedList);
+		Map<String,Double> suggestionMap = getSuggestionMap(suggestionsList);
+		Set<String> uniqueSuggestions = getUniqueSuggestions(suggestionsList);
 		List<String> sortedSuggestions = sortSuggestions(uniqueSuggestions, suggestionMap);
 		
 		if (sortedSuggestions.size() > 0) {
@@ -146,7 +206,7 @@ public class BasicAutocorrect implements Autocorrect{
 		if (wordSet.contains(s)) {
 			return "Found: " + s;
 		} else {
-			return "Guess: " + makeGuess(s);
+			return "Guess: " + suggestOne(s);
 		}
 	}
 
