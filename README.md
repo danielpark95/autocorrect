@@ -16,10 +16,6 @@ Import the project into Eclipse/IntelliJ/etc. and run AutocorrectApp.java.
 ### BasicAutocorrect
 Basic implementation of Autocorrect that returns the most frequently suggested word after running 4 methods (add one letter, remove one letter, replace one letter, switch two adjacent letters).
 
-#### Examples
-"esting" -> "vesting"
-
-"yogging" -> "hogging"
 
 ### AdvancedAutocorrect
 Advanced implementation of AutoCorrect that
@@ -27,7 +23,11 @@ Advanced implementation of AutoCorrect that
 2) takes into account word frequency in final ranking
 3) weighs equal-length words returned from replaceOneLetter() and switchTwoLetters() more than addOneLetter() and removeOneLetter() (e.g. "esting" could be "eating" or "testing", but "eating" will be prioritized) 
 
-#### Examples
-"esting" -> "eating"
+### Examples
+#### Basic
+"esting" -> "vesting"
+"yogging" -> "hogging"
 
+#### Advanced
+"esting" -> "eating"
 "yogging" -> "jogging"
