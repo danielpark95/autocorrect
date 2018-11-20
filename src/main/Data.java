@@ -56,17 +56,17 @@ public class Data {
 		Map<String, Integer> rankedMap = new HashMap<>();
 		try {
 			int i = 0;
-			Scanner file = new Scanner(getFile("res/100k_ranked.txt"));
-			file.useDelimiter("\n");
-			while (file.hasNext()) {
-				String word = file.next().toLowerCase().trim();
+			Scanner scanner = new Scanner(getFile("res/100k_ranked.txt"));
+			scanner.useDelimiter("\n");
+			while (scanner.hasNext()) {
+				String word = scanner.next().toLowerCase().trim();
 				if (word.startsWith("#")) {
 					continue;
 				} else {
 					rankedMap.put(word,++i);
 				}
 			}
-			file.close();
+			scanner.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -77,11 +77,11 @@ public class Data {
 	private Set<String> loadWordSet(){
 		Set<String> wordSet = new HashSet<>();
 		try {
-			Scanner file = new Scanner(getFile("res/english_corpus.txt"));
-			while (file.hasNext()) {
-				wordSet.add(file.next().toLowerCase().trim());
+			Scanner scanner = new Scanner(getFile("res/english_corpus.txt"));
+			while (scanner.hasNext()) {
+				wordSet.add(scanner.next().toLowerCase().trim());
 			}
-			file.close();
+			scanner.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -93,15 +93,15 @@ public class Data {
 	private Map<String, String> loadNeighborMap(){
 		Map<String, String> neighborMap = new HashMap<>();
 		try {
-			Scanner file = new Scanner(getFile("res/nearby_keys.txt"));
-			file.useDelimiter("\n");
-			int numLines = Integer.parseInt(file.next());
+			Scanner scanner = new Scanner(getFile("res/nearby_keys.txt"));
+			scanner.useDelimiter("\n");
+			int numLines = Integer.parseInt(scanner.next());
 			for (int i = 0 ; i < numLines/2; i++) {
-				String key = file.next().toLowerCase();
-				String values = file.next().toLowerCase().trim();
+				String key = scanner.next().toLowerCase();
+				String values = scanner.next().toLowerCase().trim();
 				neighborMap.put(key, values);
 			}
-			file.close();
+			scanner.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -112,10 +112,10 @@ public class Data {
 	private String loadLetters() {
 		String letters = "";
 		try {
-			Scanner file = new Scanner(getFile("res/letters.txt"));
-			file.useDelimiter("\n");
-			letters = file.next().toLowerCase().trim();
-			file.close();
+			Scanner scanner = new Scanner(getFile("res/letters.txt"));
+			scanner.useDelimiter("\n");
+			letters = scanner.next().toLowerCase().trim();
+			scanner.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}

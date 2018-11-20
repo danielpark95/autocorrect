@@ -15,7 +15,7 @@ public class BasicAutocorrect implements Autocorrect{
 	private Set<String> wordSet;
 	private Map<String, String> neighborMap;
 	private String letters;
-	boolean verbose = true;
+	boolean verbose = false;
 	
 	public BasicAutocorrect(Data data) {
 		wordSet = data.getWordSet();

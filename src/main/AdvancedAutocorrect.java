@@ -21,7 +21,7 @@ public class AdvancedAutocorrect extends BasicAutocorrect{
 		super(data);
 		rankMap = data.getRankMap();
 	}
-	boolean verbose = true;
+	boolean verbose = false;
 	
 	public double[] getMinMax(Set<String> combinedSet, Map<String, Double> combinedMap) {
 		double min = Double.MAX_VALUE;
