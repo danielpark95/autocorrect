@@ -13,6 +13,7 @@ Import the project into Eclipse/IntelliJ/etc. and run AutocorrectApp.java.
 
 ### Example
 ![alt text](https://www.dropbox.com/s/hjjp70djfdmhf0o/test.png?dl=0)
+[[https://github.com/danielpark95/autocorrect/tree/master/img/test.png|alt=example]]
 
 
 ## Implementation
