@@ -9,7 +9,7 @@ javac main/AutocorrectApp.java
 java main/AutocorrectApp
 ```
 
-<a href="url"><img src="https://github.com/danielpark95/autocorrect/blob/master/img/command_line_demo.png" align="left" width="700" ></a>
+<a href="url"><img src="https://github.com/danielpark95/autocorrect/blob/master/img/command_line_demo.png" width="700" ></a>
 
 
 ### IDE
