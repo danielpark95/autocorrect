@@ -15,6 +15,7 @@ java main/AutocorrectApp
 ### IDE
 Import the project into Eclipse/IntelliJ/etc. and run AutocorrectApp.java.
 
+<a href="url"><img src="https://github.com/danielpark95/autocorrect/blob/master/img/eclipse_demo.png" width="700" ></a>
 
 ## Implementation
 ### BasicAutocorrect
