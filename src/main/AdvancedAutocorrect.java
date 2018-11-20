@@ -87,7 +87,7 @@ public class AdvancedAutocorrect extends BasicAutocorrect{
 	
 	//Overloading parent method to include weights as a parameter
 	public List<String> combineAndSort(String s, Double[] weights) {
-		System.out.print("Advanced ");
+		System.out.print("\tAdvanced ");
 		//System.out.println("\tinput = \""  + s + "\"");
 		Set<String> combinedSet = new HashSet<String>();
 		Map<String, Double> combinedMap = new HashMap<String, Double>();
